@@ -24,10 +24,12 @@ void Neuron::addTime(double i){
 	times.push_back(i);
 }
 				
-void Neuron::update(double t, double Current){
+void Neuron::update(double Current){
+	
+	++clock_;
 	
 	if (temps_pause > 0.0){ //Neuron is refractory
-		temps_pause -= h; //h est notre pas de temps
+		--temps_pause; //h est notre pas de temps
 		
 		if (temps_pause <= 0.0){
 			potential=Vreset;
@@ -39,9 +41,9 @@ void Neuron::update(double t, double Current){
 		new_potential=exphtau*potential+Current*R*(1-exphtau);
 		
 		if (new_potential >= Vth){ //Le neurone spike
-			addTime(t);
+			addTime(clock_);
 			addSpike();
-			temps_pause=tauRef;
+			temps_pause=(tauRef/h);
 		}
 		
 		potential=new_potential;
@@ -49,7 +51,7 @@ void Neuron::update(double t, double Current){
 }
 
 Neuron::Neuron()
-: potential(Vreset),spikesNumber(0.0),temps_pause(0.0)
+: potential(Vreset),spikesNumber(0.0),temps_pause(0.0), clock_(0.0)
 {
 	times.clear();
 }

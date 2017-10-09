@@ -13,27 +13,29 @@ int main(){
 	cin >> t_stop;
 	cout << endl;
 	
-	double ExtCurrent(0);
-	cout << "Determine an external current ([0;400] pA) :";
+	double ExtCurrent(0.0);
+	cout << "Determine an external current ([1;100] pA) :";
 	cin >> ExtCurrent;
 	cout << endl;
 		
-	ofstream sortie("Simulator.txt");
+	ofstream sortie("Data.txt");
 
 	Neuron neurone;
 	
-	for (double t(0); t < t_stop; t+=h){
+	int nb_steps(t_stop/Neuron::h); //0.1ms est notre pas de temps
+	
+	for (int t(0); t < nb_steps; ++t){
 		if (sortie.fail()){
 			cerr<< "Erreur d'ouvertur du fichier" << endl;
 		}else{
 			sortie /*<< "At time " << t << " : " */<< neurone.getPotential() << endl;
 		
-			neurone.update(t,ExtCurrent);
+			neurone.update(ExtCurrent);
 		}
 	}
 	
 	for (size_t i(0); i < neurone.getSpikesNumber();++i){
-		cout << "Spike au temps : " << neurone.getTime(i) << endl;
+		cout << "Spike au temps : " << neurone.getTime(i)*Neuron::h << endl;
 	}
 	
 	cout << "Le neurone a 'spiké' " << neurone.getSpikesNumber() << " fois." << endl;
